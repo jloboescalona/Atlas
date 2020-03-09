@@ -36,11 +36,19 @@ OPENNEBULA_ZONES:
     RPC: http://127.0.0.1:2633/RPC2
     ZEROMQ: 
     VNC:
-
+      - PEPE: dssa
+      - COSA: asd
 # Presentation information system (Config information)
 SYSTEM_DATA:
   NO_AUTH:
     - MODE
+    - LIMIT_TOKEN:
+        - MAX
+    - OPENNEBULA_ZONES:
+        - ID
+        - VNC:
+          - COSA
+        - ZEROMQ
   AUTH:
     - MODE
     - OPENNEBULA_ZONES:

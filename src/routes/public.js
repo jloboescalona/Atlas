@@ -37,7 +37,7 @@ router.get('*', (req, res) => {
     <html>
     <head>
       <link rel='shortcut icon' type='image/png' href='/static/favicon.png' />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       ${includeCSSbyHTML(pathPublic)}
     </head>
