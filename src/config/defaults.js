@@ -18,10 +18,12 @@ module.exports = {
       VNC: ''
     }
   ],
+  default
   defaultConfigFile: `${__dirname}/../config.yml`,
   defaultTypeLog: 'prod',
   defaultWebpackMode: 'development',
-  defaultConfigLog: '/var/log/one/atlas.log',
+  defaultConfigLogPath: '/var/log/one/',
+  defaultConfigLogFile: 'sunstone.log',
   defaultBaseURL: '',
   defaultNamespace: 'one.',
   defaultMessageInvalidZone: 'Invalid Zone',

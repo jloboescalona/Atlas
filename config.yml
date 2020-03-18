@@ -2,7 +2,7 @@
 # Server Configuration
 ################################################################################
 
-# System log (Morgan) if is prod this create a file in /var/log/one
+# System log (Morgan) prod or dev
 LOG: prod
 
 # Enable cors (cross-origin resource sharing)

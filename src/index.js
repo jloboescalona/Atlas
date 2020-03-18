@@ -1,18 +1,29 @@
 const compression = require('compression');
+const { env } = require('process');
 const helmet = require('helmet');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs-extra');
+const {
+  existsSync,
+  accessSync,
+  constants: fsConstants,
+  createWriteStream,
+  readFileSync
+} = require('fs-extra');
 const { createServer: unsecureServer } = require('http');
 const { createServer: secureServer } = require('https');
-const bodyParser = require( 'body-parser');
-const { getConfig } = require( './utils/yml-connect');
-const { defaultConfigLog, defaultTypeLog }  = require( './config/defaults');
-const publicRoutes = require( './routes/public');
-const apiRoutes = require( './routes/api');
-const { messageTerminal, addWsServer }  = require( './utils');
+const bodyParser = require('body-parser');
+const { getConfig } = require('./utils/yml-connect');
+const {
+  defaultConfigLogFile,
+  defaultConfigLogPath,
+  defaultTypeLog
+} = require('./config/defaults');
+const publicRoutes = require('./routes/public');
+const apiRoutes = require('./routes/api');
+const { messageTerminal, addWsServer } = require('./utils');
 
 const app = express();
 
@@ -27,14 +38,22 @@ const userLog = appConfig.LOG || 'dev';
 const key = `${__dirname}/../cert/key.pem`;
 const cert = `${__dirname}/../cert/cert.pem`;
 
-// create log file
-const logStream = fs.createWriteStream(defaultConfigLog, {
-  flags: 'a'
-});
-const log =
-  userLog === defaultTypeLog
-    ? morgan('combined', { stream: logStream })
-    : morgan(userLog);
+let log = morgan('dev');
+if (userLog === defaultTypeLog) {
+  let logPath = `${defaultConfigLogPath}`;
+  if (env?.ONE_LOCATION) {
+    logPath = env.ONE_LOCATION + logPath;
+  }
+  try {
+    accessSync(logPath, fsConstants.W_OK);
+    const logStream = createWriteStream(logPath + defaultConfigLogFile, {
+      flags: 'a'
+    });
+    log = morgan('combined', { stream: logStream });
+  } catch (err) {
+    console.error('no access!');
+  }
+}
 
 app.use(helmet.hidePoweredBy());
 app.use(compression());
@@ -68,16 +87,11 @@ app.get('*', (req, res) =>
 
 // server
 const appServer =
-  fs &&
-  fs.existsSync &&
-  key &&
-  cert &&
-  fs.existsSync(key) &&
-  fs.existsSync(cert)
+  existsSync && key && cert && existsSync(key) && existsSync(cert)
     ? secureServer(
         {
-          key: fs.readFileSync(key, 'utf8'),
-          cert: fs.readFileSync(cert, 'utf8')
+          key: readFileSync(key, 'utf8'),
+          cert: readFileSync(cert, 'utf8')
         },
         app
       )
