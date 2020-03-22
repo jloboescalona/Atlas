@@ -18,7 +18,6 @@ module.exports = {
       VNC: ''
     }
   ],
-  default
   defaultConfigFile: `${__dirname}/../config.yml`,
   defaultTypeLog: 'prod',
   defaultWebpackMode: 'development',

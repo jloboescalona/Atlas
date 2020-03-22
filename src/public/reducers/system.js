@@ -13,7 +13,7 @@ const findInConf = (finder = '', data = {}) => {
 
 // aca se tiene que separar lo que esta en config para dejarlo publico
 const GetConfigSystem = config => {
-  let noAuthConf = {};
+  const noAuthConf = {};
   if (config) {
     const systemData = config();
     if (
@@ -21,43 +21,43 @@ const GetConfigSystem = config => {
       Array.isArray(systemData?.SYSTEM_DATA?.NO_AUTH)
     ) {
       const dataNoAuth = systemData.SYSTEM_DATA.NO_AUTH;
-      // console.log('system ', systemData);
+      console.log('data: ', systemData);
+      console.log('dataNoAuth: ', dataNoAuth);
 
-      const inObject = (place, findElement) => {
-        console.log('JORGE: ', place, findElement);
-        let rtn = place;
-        if (Array.isArray(place)) {
-        } else {
-          const reducer = current => place && place[current];
-          console.log(findElement.forEach(reducer));
+      const render = (finder, element, rtnn = {}) => {
+        const rtn = rtnn;
+        const allowedTypes = ['string', 'number', 'boolean'];
+        if (finder && Array.isArray(finder)) {
+          finder.forEach(find => {
+            const entriesFind = Object.entries(find);
+            const [key, value] = entriesFind && entriesFind[0];
+            const findKey = key && key === '0' ? find : key;
+            const findValue = key && key !== '0' && value;
+            console.log(
+              'validate: ',
+              element[findKey],
+              typeof element[findKey]
+            );
+            if (findKey in element) {
+              const typeElement = typeof element[findKey];
+              if (allowedTypes.includes(typeElement)) {
+                rtn[findKey] = element[findKey];
+              } else if (Array.isArray(element[findKey])) {
+                // todavia
+              } else {
+                rtn[findKey] = render(
+                  findValue,
+                  element[findKey],
+                  rtn[findKey]
+                );
+              }
+            }
+          });
         }
-        
         return rtn;
       };
 
-      dataNoAuth.forEach(data => {
-        const entriesDataNoAuth = Object.entries(data);
-        const [key, value] = entriesDataNoAuth && entriesDataNoAuth[0];
-        const finder = key && key === '0' ? data : key;
-        const internal = key && key !== '0' && value;
-
-        /* console.log(
-          'J-->',
-          internal,
-          typeof systemData[finder],
-          systemData[finder]
-        ); */
-
-        if (finder in systemData) {
-          noAuthConf = {
-            ...noAuthConf,
-            [finder]: !internal
-              ? systemData[finder]
-              : inObject(systemData[finder], internal)
-          };
-        }
-      });
-      // console.log('-->', noAuthConf);
+      console.log('RENDER-->', render(dataNoAuth, systemData));
     }
     initial = { ...initial, ...noAuthConf };
   }
