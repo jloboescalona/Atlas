@@ -29,15 +29,16 @@ LIMIT_TOKEN:
 
 OPENNEBULA_ZONES: 
   - ID: 0
-    RPC: http://localhost:2633/RPC2
-    ZEROMQ: 
+    RPC: http://127.0.0.1:2633/RPC2
+    ZEROMQ:
     VNC:
   - ID: 1
     RPC: http://127.0.0.1:2633/RPC2
-    ZEROMQ: 
+    ZEROMQ: pepe
     VNC:
       - PEPE: dssa
-      - COSA: asd
+      - COSA:
+
 # Presentation information system (Config information)
 SYSTEM_DATA:
   NO_AUTH:
@@ -48,6 +49,7 @@ SYSTEM_DATA:
         - ID
         - VNC:
           - COSA
+          - PEPE
         - ZEROMQ
   AUTH:
     - MODE

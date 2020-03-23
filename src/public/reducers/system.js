@@ -21,11 +21,13 @@ const GetConfigSystem = config => {
       Array.isArray(systemData?.SYSTEM_DATA?.NO_AUTH)
     ) {
       const dataNoAuth = systemData.SYSTEM_DATA.NO_AUTH;
-      console.log('data: ', systemData);
-      console.log('dataNoAuth: ', dataNoAuth);
+      // console.log('data: ', systemData);
+      console.log('_____________________________________');
 
-      const render = (finder, element, rtnn = {}) => {
-        const rtn = rtnn;
+      //              NO_AUTH   CONFIG     RESULT
+      const render = (finder, configData, result = {}) => {
+        console.log('FINDER: ', finder);
+        const rtn = result;
         const allowedTypes = ['string', 'number', 'boolean'];
         if (finder && Array.isArray(finder)) {
           finder.forEach(find => {
@@ -33,21 +35,33 @@ const GetConfigSystem = config => {
             const [key, value] = entriesFind && entriesFind[0];
             const findKey = key && key === '0' ? find : key;
             const findValue = key && key !== '0' && value;
-            console.log(
-              'validate: ',
-              element[findKey],
-              typeof element[findKey]
-            );
-            if (findKey in element) {
-              const typeElement = typeof element[findKey];
+            if (findKey in configData && configData[findKey] !== null) {
+              const typeElement = typeof configData[findKey];
               if (allowedTypes.includes(typeElement)) {
-                rtn[findKey] = element[findKey];
-              } else if (Array.isArray(element[findKey])) {
-                // todavia
+                rtn[findKey] = configData[findKey];
+              } else if (Array.isArray(configData[findKey])) {
+                const xxx = configData[findKey].reduce(
+                  (accValue, currentValue) => {
+                    console.log('CURRENTVALUE: ', currentValue);
+                    const validate = render(
+                      findValue,
+                      currentValue,
+                      rtn[findKey]
+                    );
+                    if (Object.entries(validate).length > 0) {
+                      accValue.push(validate);
+                    }
+                    return accValue;
+                  },
+                  []
+                );
+
+                // console.log('TEST xxx: ', xxx);
+                rtn[findKey] = xxx;
               } else {
                 rtn[findKey] = render(
                   findValue,
-                  element[findKey],
+                  configData[findKey],
                   rtn[findKey]
                 );
               }
@@ -56,8 +70,8 @@ const GetConfigSystem = config => {
         }
         return rtn;
       };
-
-      console.log('RENDER-->', render(dataNoAuth, systemData));
+      const pepe = render(dataNoAuth, systemData);
+      console.log('RENDER-->', JSON.stringify(pepe.OPENNEBULA_ZONES, null, 2));
     }
     initial = { ...initial, ...noAuthConf };
   }
