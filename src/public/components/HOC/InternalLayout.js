@@ -1,51 +1,37 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Col } from 'reactstrap';
+import React from 'react';
+import { Drawer, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Header from '../containers/Header';
 import Footer from '../containers/Footer';
 import PrincipalMenu from '../containers/PrincipalMenu';
+import { showMenu } from '../../actions';
 
-class InternalLayout extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      redirect: false
-    };
-  }
-
-  render() {
-    const { children, display } = this.props;
-    return (
-      <Fragment>
-        <Header />
-        <Row className={classnames('flex-grow-1')}>
-          <Col
-            className={classnames(
-              'menu',
-              { open: display },
-              { close: !display }
-            )}
-          >
-            <PerfectScrollbar>
-              <PrincipalMenu />
-            </PerfectScrollbar>
-          </Col>
-          <Col className={classnames('content')}>
-            <PerfectScrollbar>{children}</PerfectScrollbar>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Footer />
-          </Col>
-        </Row>
-      </Fragment>
-    );
-  }
-}
+const InternalLayout = ({ children, display, displayMenu }) => (
+  <Grid container direction="column" style={{ height: '100vh' }}>
+    <Header />
+    <Drawer anchor="left"  open={display} onClose={() => displayMenu(false)}>
+      <PrincipalMenu />
+    </Drawer>
+    <Grid item xs>
+      <Grid
+        container
+        direction="column"
+        justify="flex-start"
+        alignItems="stretch"
+        style={{ height: '100%' }}
+      >
+        <Grid item xs>
+          <PerfectScrollbar>{children}</PerfectScrollbar>
+        </Grid>
+        <Grid item>
+          <Footer />
+        </Grid>
+      </Grid>
+    </Grid>
+  </Grid>
+);
 
 InternalLayout.propTypes = {
   children: PropTypes.oneOfType([
@@ -53,12 +39,14 @@ InternalLayout.propTypes = {
     PropTypes.node,
     PropTypes.string
   ]),
-  display: PropTypes.bool
+  display: PropTypes.bool,
+  displayMenu: PropTypes.func
 };
 
 InternalLayout.defaultProps = {
   children: [],
-  display: false
+  display: false,
+  displayMenu: () => undefined
 };
 
 const mapStateToProps = state => {
@@ -68,7 +56,9 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = dispatch => ({
+  displayMenu: display => dispatch(showMenu(display))
+});
 
 export default connect(
   mapStateToProps,

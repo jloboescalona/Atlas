@@ -31,8 +31,7 @@ Zone.propTypes = {
 };
 
 Zone.defaultProps = {
-  display: false,
-  displayMenu: () => undefined
+  display: false
 };
 
 const mapStateToProps = state => {
@@ -42,9 +41,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  clearData: display => dispatch(showMenu(display))
-});
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(
   mapStateToProps,

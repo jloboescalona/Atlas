@@ -1,24 +1,16 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'reactstrap';
+import { Grid } from '@material-ui/core';
 import classnames from 'classnames';
 import constants from '../../../constants';
 
 const { by } = constants;
-class Footer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      redirect: false
-    };
-  }
 
-  render() {
-    return (
-      <Row>
-        <Col className={classnames('footer')}>footer</Col>
-      </Row>
-    );
-  }
-}
+const Footer = () => (
+  <Grid container>
+    <Grid item xs={12} className={classnames('footer')}>
+      footer
+    </Grid>
+  </Grid>
+);
 
 export default Footer;

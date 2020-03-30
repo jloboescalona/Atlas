@@ -223,7 +223,6 @@ Login.defaultProps = {
 
 const mapStateToProps = state => {
   const { System } = state;
-  console.log('JORGE', System);
   return {
     baseURL: System.baseURL
   };

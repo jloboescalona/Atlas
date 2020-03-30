@@ -1,19 +1,7 @@
-let initial = {
-  baseURL: ''
-};
-const findInConf = (finder = '', data = {}) => {
-  if (data && Array.isArray(data) && typeof finder === 'string') {
-    return data.find(
-      element =>
-        (typeof element === 'string' && element === finder) ||
-        (element && element[finder])
-    );
-  }
-};
+let initial = {};
 
-// aca se tiene que separar lo que esta en config para dejarlo publico
 const GetConfigSystem = config => {
-  const noAuthConf = {};
+  let data = {};
   if (config) {
     const systemData = config();
     if (
@@ -21,12 +9,7 @@ const GetConfigSystem = config => {
       Array.isArray(systemData?.SYSTEM_DATA?.NO_AUTH)
     ) {
       const dataNoAuth = systemData.SYSTEM_DATA.NO_AUTH;
-      // console.log('data: ', systemData);
-      console.log('_____________________________________');
-
-      //              NO_AUTH   CONFIG     RESULT
       const render = (finder, configData, result = {}) => {
-        console.log('FINDER: ', finder);
         const rtn = result;
         const allowedTypes = ['string', 'number', 'boolean'];
         if (finder && Array.isArray(finder)) {
@@ -42,7 +25,6 @@ const GetConfigSystem = config => {
               } else if (Array.isArray(configData[findKey])) {
                 const xxx = configData[findKey].reduce(
                   (accValue, currentValue) => {
-                    console.log('CURRENTVALUE: ', currentValue);
                     const validate = render(
                       findValue,
                       currentValue,
@@ -55,8 +37,6 @@ const GetConfigSystem = config => {
                   },
                   []
                 );
-
-                // console.log('TEST xxx: ', xxx);
                 rtn[findKey] = xxx;
               } else {
                 rtn[findKey] = render(
@@ -66,15 +46,18 @@ const GetConfigSystem = config => {
                 );
               }
             }
+            if (configData[findKey] === null) {
+              rtn[findKey] = null;
+            }
           });
         }
         return rtn;
       };
-      const pepe = render(dataNoAuth, systemData);
-      console.log('RENDER-->', JSON.stringify(pepe.OPENNEBULA_ZONES, null, 2));
+      data = render(dataNoAuth, systemData);
     }
-    initial = { ...initial, ...noAuthConf };
+    initial = { ...initial, ...data };
   }
+
   return (state = initial, action) => {
     switch (action.type) {
       default:

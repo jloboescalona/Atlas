@@ -43,11 +43,7 @@ router.get('*', (req, res) => {
     </head>
     <body>
       <div id="root" class="${classnames(
-        'container-fluid',
-        'd-flex',
-        'flex-column',
-        'min-vh-100',
-        'justify-content-between'
+        'MuiContainer-root'
       )}">${component}</div>
       <script id="preloadState">
         window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState()).replace(

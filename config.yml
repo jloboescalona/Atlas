@@ -33,24 +33,15 @@ OPENNEBULA_ZONES:
     ZEROMQ:
     VNC:
   - ID: 1
-    RPC: http://127.0.0.1:2633/RPC2
-    ZEROMQ: pepe
+    RPC: http://localhost:2633/RPC2
+    ZEROMQ:
     VNC:
-      - PEPE: dssa
-      - COSA:
+
 
 # Presentation information system (Config information)
 SYSTEM_DATA:
   NO_AUTH:
     - MODE
-    - LIMIT_TOKEN:
-        - MAX
-    - OPENNEBULA_ZONES:
-        - ID
-        - VNC:
-          - COSA
-          - PEPE
-        - ZEROMQ
   AUTH:
     - MODE
     - OPENNEBULA_ZONES:

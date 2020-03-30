@@ -10,6 +10,17 @@ import Dashboard from './containers/Dashboard';
 
 const { reactEndpoints } = constants;
 const { login, dashboard, settings } = reactEndpoints;
+const routeElement = (path, children) => (
+  <Route
+    exact
+    path={path}
+    component={({ match, history }) => (
+      <AuthLayout history={history} match={match}>
+        <InternalLayout>{children}</InternalLayout>
+      </AuthLayout>
+    )}
+  />
+);
 const Routes = () => (
   <Switch>
     <Route
@@ -19,28 +30,8 @@ const Routes = () => (
         <Login history={history} match={match} />
       )}
     />
-    <Route
-      exact
-      path={dashboard}
-      component={({ match, history }) => (
-        <AuthLayout history={history} match={match}>
-          <InternalLayout>
-            <Dashboard />
-          </InternalLayout>
-        </AuthLayout>
-      )}
-    />
-    <Route
-      exact
-      path={settings}
-      component={({ match, history }) => (
-        <AuthLayout history={history} match={match}>
-          <InternalLayout>
-            <Settings />
-          </InternalLayout>
-        </AuthLayout>
-      )}
-    />
+    {routeElement(dashboard, <Dashboard />)}
+    {routeElement(settings, <Settings />)}
     <Route component={() => <Error404 />} />
   </Switch>
 );

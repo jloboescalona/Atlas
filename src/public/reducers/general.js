@@ -1,5 +1,5 @@
 const initial = {
-  displayMenu: true,
+  displayMenu: false,
   zone: 0,
   loading: true
 };
