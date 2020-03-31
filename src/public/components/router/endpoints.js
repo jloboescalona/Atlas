@@ -1,5 +1,5 @@
 import React from 'react';
-import Login from '../containers/Login';
+import Login from './login';
 import Settings from '../containers/Settings';
 import Dashboard from '../containers/Dashboard';
 import { Clusters, Hosts, Zones } from '../containers/Infrastructure';
@@ -8,7 +8,7 @@ const endpoints = {
   login: {
     path: '/',
     authenticated: false,
-    component: () => <Login />
+    component: Login
   },
   dashboard: {
     name: 'Dashboard',
