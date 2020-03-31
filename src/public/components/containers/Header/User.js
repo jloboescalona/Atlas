@@ -1,52 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
 import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Label
-} from 'reactstrap';
-import classnames from 'classnames';
+  Button,
+  Popper,
+  Grow,
+  Paper,
+  MenuItem,
+  MenuList,
+  ClickAwayListener,
+  Divider
+} from '@material-ui/core';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Translate } from '../../HOC';
-import constants from '../../../constants'; // aca se puede obtener el logo en base64
+import constants from '../../../constants';
 
-const { Language } = constants;
 const User = props => {
-  const { SignOut } = constants;
-  const [display, setDisplay] = useState(false);
-  const toggle = () => setDisplay(!display);
+  const { SignOut, Language, Groups } = constants;
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const { current } = anchorRef;
+  const handleToggle = () => {
+    setOpen(prevOpen => !prevOpen);
+  };
+  const handleClose = e => {
+    if (current && current.contains(e.target)) {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
-    <Dropdown
-      className={classnames('mx-1')}
-      isOpen={display}
-      toggle={toggle}
-      size="sm"
-    >
-      <DropdownToggle color="outline-primary">
-        <i className={classnames('fas', 'fa-user', 'mr-1')} />
-        pepe
-      </DropdownToggle>
-      <DropdownMenu right>
-        <DropdownItem divider />
-        <div className={classnames('drodown-item', 'col-12')}>
-          <Label for="changeLang">
-            <small>
-              <b>
-                <Translate word={Language} />
-              </b>
-            </small>
-          </Label>
-          <Translate />
-        </div>
-        <DropdownItem divider />
-        <DropdownItem className={classnames('text-center')}>
-          <i className={classnames('fas', 'fa-power-off', 'mr-1')} />
-          <Translate word={SignOut} />
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+    <Fragment>
+      <Button
+        ref={anchorRef}
+        color="inherit"
+        aria-controls={open ? 'menu-list-grow' : undefined}
+        aria-haspopup="true"
+        onClick={handleToggle}
+      >
+        <AccountCircleIcon />
+      </Button>
+      <Popper
+        open={open}
+        anchorEl={current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom'
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList autoFocusItem={open} id="menu-list-grow">
+                  <MenuItem onClick={handleClose}>Settings</MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleClose}>
+                    <Translate word={SignOut} />
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleClose}>
+                    <Translate word={Groups} />
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </Fragment>
   );
 };
 

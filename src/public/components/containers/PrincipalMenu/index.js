@@ -1,30 +1,22 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Button } from 'reactstrap';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 
-class PrincipalMenu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      redirect: false
-    };
-    this.onRedirect = this.onRedirect.bind(this);
-  }
+const PrincipalMenu = () => {
+  const { redirect, setRedirect } = useState(false);
 
-  onRedirect() {
-    this.setState({ redirect: !this.state.redirect });
-  }
-
-  render() {
-    const { redirect } = this.state;
-    return redirect ? (
-      <Redirect to="/" />
-    ) : (
-      <Button type="primary" onClick={this.onRedirect}>
-        redirect
-      </Button>
-    );
-  }
-}
+  return redirect ? (
+    <Redirect to="/" />
+  ) : (
+    <List>
+      <ListItem button onClick={() => setRedirect(true)}>
+        <ListItemText primary="Redirect" />
+      </ListItem>
+      <ListItem button onClick={() => setRedirect(true)}>
+        <ListItemText primary="Redirect" />
+      </ListItem>
+    </List>
+  );
+};
 
 export default PrincipalMenu;

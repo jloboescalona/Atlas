@@ -2,7 +2,7 @@
 # Server Configuration
 ################################################################################
 
-# System log (Morgan) if is prod this create a file in /var/log/one
+# System log (Morgan) prod or dev
 LOG: prod
 
 # Enable cors (cross-origin resource sharing)
@@ -29,13 +29,14 @@ LIMIT_TOKEN:
 
 OPENNEBULA_ZONES: 
   - ID: 0
-    RPC: http://localhost:2633/RPC2
-    ZEROMQ: 
+    RPC: http://127.0.0.1:2633/RPC2
+    ZEROMQ:
     VNC:
   - ID: 1
-    RPC: http://127.0.0.1:2633/RPC2
-    ZEROMQ: 
+    RPC: http://localhost:2633/RPC2
+    ZEROMQ:
     VNC:
+
 
 # Presentation information system (Config information)
 SYSTEM_DATA:

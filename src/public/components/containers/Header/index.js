@@ -1,65 +1,48 @@
-import React, { Component } from 'react';
-import { Row, Col, Button } from 'reactstrap';
-import classnames from 'classnames';
+import React from 'react';
+import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import User from './User';
 import Zone from './Zone';
 import { showMenu } from '../../../actions';
-import constants from '../../../constants'; // aca se puede obtener el logo en base64
 
-class Header extends Component {
-  constructor() {
-    super();
-    this.state = {
-      redirect: false
-    };
-    this.toggleMenu = this.toggleMenu.bind(this);
-  }
-
-  toggleMenu(e) {
-    e.preventDefault();
-    const { displayMenu, display } = this.props;
-    displayMenu(!display);
-  }
-
-  render() {
-    return (
-      <Row className={classnames('header', 'align-items-center', 'py-4')}>
-        <Col className={classnames('col-12', 'col-sm-6')}>
-          <Button
-            outline
-            color="primary"
-            className={classnames('mr-3')}
-            onClick={this.toggleMenu}
-          >
-            <i className={classnames('fas', 'fa-bars')} />
-          </Button>
-        </Col>
-        <Col
-          className={classnames(
-            'col-12',
-            'col-sm-6',
-            'justify-content-end',
-            'd-flex'
-          )}
+const Header = ({ display, displayMenu: displayMenuFromProps, title }) => {
+  const displayMenu = () => {
+    displayMenuFromProps(!display);
+  };
+  return (
+    <AppBar position="sticky">
+      <Toolbar>
+        <IconButton
+          onClick={displayMenu}
+          edge="start"
+          className=""
+          color="inherit"
+          aria-label="menu"
         >
-          <Zone />
-          <User />
-        </Col>
-      </Row>
-    );
-  }
-}
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" style={{ flexGrow: 1 }}>
+          {title}
+        </Typography>
+        <User />
+        <Zone />
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 Header.propTypes = {
   display: PropTypes.bool,
-  displayMenu: PropTypes.func
+  displayMenu: PropTypes.func,
+  title: PropTypes.string
 };
 
 Header.defaultProps = {
   display: false,
-  displayMenu: () => undefined
+  displayMenu: () => undefined,
+  title: ''
 };
 
 const mapStateToProps = state => {
