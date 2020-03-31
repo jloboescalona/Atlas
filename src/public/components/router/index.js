@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createElement } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AuthLayout } from '../HOC';
@@ -20,11 +20,11 @@ const routeElement = ({
       authenticated ? (
         <AuthLayout history={history} match={match}>
           <InternalLayout title={name}>
-            {React.createElement(component)}
+            {createElement(component)}
           </InternalLayout>
         </AuthLayout>
       ) : (
-        React.createElement(component, { history, match })
+        createElement(component, { history, match })
       )
     }
   />
@@ -42,9 +42,9 @@ routeElement.propTypes = {
 };
 
 routeElement.defaultProps = {
-  path: '',
+  path: '/',
   name: '',
-  authenticated: false,
+  authenticated: true,
   component: ''
 };
 

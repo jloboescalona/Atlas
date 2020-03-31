@@ -81,8 +81,6 @@ const Login = ({ history, baseURL }) => {
             } else if (id === 200 && opennebulaToken) {
               setWriteToken(false);
               storage(jwtName, opennebulaToken, keepLogged);
-              console.log(routerEndpoints.dashboard.path);
-              console.log(history);
               history.push(routerEndpoints.dashboard.path);
             }
           }

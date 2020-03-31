@@ -5,6 +5,7 @@ const root = require('window-or-global');
 const { createStore, compose, applyMiddleware } = require('redux');
 const thunk = require('redux-thunk').default;
 const classnames = require('classnames');
+const { ServerStyleSheets } = require('@material-ui/core/styles');
 const rootReducer = require('../public/reducers');
 const App = require('../public/app').default;
 const { getConfig } = require('../utils/yml-connect');
@@ -28,9 +29,11 @@ router.get('*', (req, res) => {
     composeEnhancer(applyMiddleware(thunk))
   );
 
+  const sheets = new ServerStyleSheets();
   const component = renderToString(
-    <App location={req.url} context={context} store={store} />
+    sheets.collect(<App location={req.url} context={context} store={store} />)
   );
+  const css = sheets.toString();
 
   const html = `
   <!doctype html>
@@ -39,6 +42,7 @@ router.get('*', (req, res) => {
       <link rel='shortcut icon' type='image/png' href='/static/favicon.png' />
       <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <style id="jss-server-side">${css}</style>
       ${includeCSSbyHTML(pathPublic)}
     </head>
     <body>
