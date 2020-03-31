@@ -1,36 +1,32 @@
 import React from 'react';
-import { Drawer, Grid } from '@material-ui/core';
+import { Drawer, Box, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import Header from '../containers/Header';
 import Footer from '../containers/Footer';
 import PrincipalMenu from '../containers/PrincipalMenu';
 import { showMenu } from '../../actions';
 
-const InternalLayout = ({ children, display, displayMenu }) => (
-  <Grid container direction="column" style={{ height: '100vh' }}>
-    <Header />
-    <Drawer anchor="left"  open={display} onClose={() => displayMenu(false)}>
+const InternalLayout = ({ children, display, displayMenu, title }) => (
+  <Box>
+    <Header title={title} />
+    <Drawer anchor="left" open={display} onClose={() => displayMenu(false)}>
       <PrincipalMenu />
     </Drawer>
-    <Grid item xs>
+    <Grid container>
+      <Grid item xs={12}>
+        {children}
+      </Grid>
       <Grid
-        container
-        direction="column"
-        justify="flex-start"
-        alignItems="stretch"
-        style={{ height: '100%' }}
+        item
+        xs={12}
+        className={'footer'}
+        style={{ bottom: 0, position: 'sticky' }}
       >
-        <Grid item xs>
-          <PerfectScrollbar>{children}</PerfectScrollbar>
-        </Grid>
-        <Grid item>
-          <Footer />
-        </Grid>
+        <Footer />
       </Grid>
     </Grid>
-  </Grid>
+  </Box>
 );
 
 InternalLayout.propTypes = {
@@ -40,13 +36,15 @@ InternalLayout.propTypes = {
     PropTypes.string
   ]),
   display: PropTypes.bool,
-  displayMenu: PropTypes.func
+  displayMenu: PropTypes.func,
+  title: PropTypes.string
 };
 
 InternalLayout.defaultProps = {
   children: [],
   display: false,
-  displayMenu: () => undefined
+  displayMenu: () => undefined,
+  title: ''
 };
 
 const mapStateToProps = state => {

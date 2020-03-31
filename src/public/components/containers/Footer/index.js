@@ -5,12 +5,6 @@ import constants from '../../../constants';
 
 const { by } = constants;
 
-const Footer = () => (
-  <Grid container>
-    <Grid item xs={12} className={classnames('footer')}>
-      footer
-    </Grid>
-  </Grid>
-);
+const Footer = () => <div>footer</div>;
 
 export default Footer;

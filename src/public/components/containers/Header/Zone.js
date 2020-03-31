@@ -1,27 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
 import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
-} from 'reactstrap';
+  Button,
+  Popper,
+  Grow,
+  Paper,
+  MenuItem,
+  MenuList,
+  ClickAwayListener,
+  Divider
+} from '@material-ui/core';
+import LanguageIcon from '@material-ui/icons/Language';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import { Translate } from '../../HOC';
+import constants from '../../../constants';
 
 const Zone = props => {
-  const [display, setDisplay] = useState(false);
-  const toggle = () => setDisplay(!display);
+  const { SignOut, Language, Groups } = constants;
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const { current } = anchorRef;
+  const handleToggle = () => {
+    setOpen(prevOpen => !prevOpen);
+  };
+  const handleClose = e => {
+    if (current && current.contains(e.target)) {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
-    <Dropdown isOpen={display} toggle={toggle} size="sm">
-      <DropdownToggle color="outline-primary">
-        <i className={classnames('fas', 'fa-globe', 'mr-1')} />
+    <Fragment>
+      <Button
+        ref={anchorRef}
+        color="inherit"
+        aria-controls={open ? 'menu-list-grow' : undefined}
+        aria-haspopup="true"
+        onClick={handleToggle}
+      >
+        <LanguageIcon />
         pepe
-      </DropdownToggle>
-      <DropdownMenu right>
-        <DropdownItem>pepe!</DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+      </Button>
+      <Popper
+        open={open}
+        anchorEl={current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom'
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList autoFocusItem={open} id="menu-list-grow">
+                  <MenuItem onClick={handleClose}>Settings</MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleClose}>
+                    <Translate word={SignOut} />
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleClose}>
+                    <Translate word={Groups} />
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </Fragment>
   );
 };
 

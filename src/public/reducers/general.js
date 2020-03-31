@@ -1,4 +1,5 @@
 const initial = {
+  logoff: false,
   displayMenu: false,
   zone: 0,
   loading: true
@@ -18,6 +19,13 @@ const General = (state = initial, action) => {
       return {
         ...state,
         zone
+      };
+    }
+    case 'LOG_OFF': {
+      const { logoff } = action.payload;
+      return {
+        ...state,
+        logoff
       };
     }
     case 'DISPLAY_MENU': {

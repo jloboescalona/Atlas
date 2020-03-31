@@ -1,11 +1,5 @@
-import React, { Fragment } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  CssBaseline,
-  Typography
-} from '@material-ui/core';
+import React from 'react';
+import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -18,27 +12,24 @@ const Header = ({ display, displayMenu: displayMenuFromProps, title }) => {
     displayMenuFromProps(!display);
   };
   return (
-    <Fragment>
-      <CssBaseline />
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            onClick={displayMenu}
-            edge="start"
-            className=""
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
-          <User />
-          <Zone />
-        </Toolbar>
-      </AppBar>
-    </Fragment>
+    <AppBar position="sticky">
+      <Toolbar>
+        <IconButton
+          onClick={displayMenu}
+          edge="start"
+          className=""
+          color="inherit"
+          aria-label="menu"
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" style={{ flexGrow: 1 }}>
+          {title}
+        </Typography>
+        <User />
+        <Zone />
+      </Toolbar>
+    </AppBar>
   );
 };
 
