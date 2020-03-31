@@ -80,18 +80,17 @@ const Zone = props => {
 };
 
 Zone.propTypes = {
-  display: PropTypes.bool,
-  displayMenu: PropTypes.func
+  zone: PropTypes.string
 };
 
 Zone.defaultProps = {
-  display: false
+  zone: ''
 };
 
 const mapStateToProps = state => {
-  const { Opennebula } = state;
+  const { General } = state;
   return {
-    display: Opennebula.user
+    zone: General.zone
   };
 };
 

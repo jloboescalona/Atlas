@@ -1,16 +1,13 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
+
 import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  Button
-} from 'reactstrap';
-import classnames from 'classnames';
+  Button,
+  TextField,
+  Box,
+  FormControlLabel,
+  Checkbox,
+  Grid
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import constants from '../../../constants';
@@ -18,58 +15,49 @@ import { endpoints as routerEndpoints } from '../../../components/router';
 import { requestData, removeStoreData, storage } from '../../../utils';
 import { Translate, Tr } from '../../HOC';
 
-const {
-  checkbox,
-  classInputInvalid,
-  SignIn,
-  Username,
-  Password,
-  keepLoggedIn,
-  Token2FA
-} = constants;
+const { SignIn, Username, Password, keepLoggedIn, Token2FA } = constants;
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: '',
-      pass: '',
-      token: '',
-      writeToken: false,
-      showError: false,
-      keepLogged: false
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const Login = ({ history, baseURL }) => {
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
+  const [token, setToken] = useState('');
+  const [writeToken, setWriteToken] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [keepLogged, setKeepLogged] = useState(false);
 
-  handleChange(type = '', element = false) {
+  const handleChange = (type = '', element) => {
     if (
       element &&
       element.preventDefault &&
       element.target &&
       element.target.type &&
-      type &&
-      Object.keys(this.state).includes(type)
+      type
     ) {
-      const { target } = element;
-      if (target.type !== checkbox) {
-        element.preventDefault();
-      }
-      const { showError, keepLogged } = this.state;
-      const newState = {};
-      newState[type] = target.type === checkbox ? !keepLogged : target.value;
       if (showError) {
-        newState.showError = !showError;
+        setShowError(!showError);
       }
-      this.setState(newState);
+      const { target } = element;
+      switch (type) {
+        case 'user':
+          setUser(target.value);
+          break;
+        case 'pass':
+          setPass(target.value);
+          break;
+        case 'token':
+          setToken(target.value);
+          break;
+        case 'keepLogged':
+          setKeepLogged(!keepLogged);
+          break;
+        default:
+          break;
+      }
     }
-  }
+  };
 
-  handleSubmit(element = false) {
+  const handleSubmit = element => {
     const { jwtName, endpoints } = constants;
-    const { user, pass, token, writeToken, keepLogged } = this.state;
-    const { history, baseURL } = this.props;
     const loginParams = {
       data: { user, pass },
       method: 'POST',
@@ -80,7 +68,6 @@ class Login extends Component {
       loginParams.data.token = token;
     }
     if (element && element.preventDefault) {
-      let newState = { showError: true };
       element.preventDefault();
       if (user && pass) {
         removeStoreData(jwtName);
@@ -88,114 +75,113 @@ class Login extends Component {
           if (response && response.data) {
             const { id, data } = response;
             const { token: opennebulaToken, message } = data;
+            setShowError(false);
             if (id === 401 && message) {
-              newState = { showError: false, writeToken: true };
+              setWriteToken(true);
             } else if (id === 200 && opennebulaToken) {
-              newState = { showError: false, writeToken: false };
+              setWriteToken(false);
               storage(jwtName, opennebulaToken, keepLogged);
               console.log(routerEndpoints.dashboard.path);
               console.log(history);
               history.push(routerEndpoints.dashboard.path);
-              return;
             }
-            this.setState(newState);
           }
         });
       } else {
-        this.setState(newState);
+        setShowError(true);
       }
     }
-  }
+  };
 
-  render() {
-    const { writeToken, token, user, pass, showError, keepLogged } = this.state;
-    const classnameError = {};
-    classnameError[classInputInvalid] = showError;
-    const inputs = writeToken ? (
-      <FormGroup row>
-        <InputGroup className={classnames('col')}>
-          <InputGroupAddon addonType="prepend">
-            <i className={classnames('fas', 'fa-lock-alt')} />
-          </InputGroupAddon>
-          <Input
-            className={classnames(classnameError)}
-            type="password"
-            autoComplete="off"
-            placeholder={Tr(Token2FA)}
-            value={token}
-            onChange={e => {
-              this.handleChange('token', e);
-            }}
-          />
-        </InputGroup>
-      </FormGroup>
-    ) : (
-      <Fragment>
-        <FormGroup row>
-          <InputGroup className={classnames('col')}>
-            <Input
-              className={classnames(classnameError)}
-              type="text"
-              autoComplete="off"
-              placeholder={Tr(Username)}
-              value={user}
-              onChange={e => {
-                this.handleChange('user', e);
-              }}
-            />
-          </InputGroup>
-        </FormGroup>
-        <FormGroup row>
-          <InputGroup className={classnames('col')}>
-            <Input
-              className={classnames(classnameError)}
-              type="password"
-              autoComplete="off"
-              placeholder={Tr(Password)}
-              value={pass}
-              onChange={e => {
-                this.handleChange('pass', e);
-              }}
-            />
-          </InputGroup>
-        </FormGroup>
-      </Fragment>
-    );
+  const inputs = writeToken ? (
+    <Grid item xs style={{ marginBottom: '1rem' }}>
+      <TextField
+        fullWidth
+        required
+        label={Tr(Token2FA)}
+        defaultValue={token}
+        autoComplete="off"
+        placeholder={Tr(Token2FA)}
+        onChange={e => {
+          handleChange('token', e);
+        }}
+      />
+    </Grid>
+  ) : (
+    <Fragment>
+      <Grid item xs={12} style={{ marginBottom: '1rem' }}>
+        <TextField
+          fullWidth
+          required
+          label={Tr(Username)}
+          defaultValue={user}
+          autoComplete="off"
+          onChange={e => {
+            handleChange('user', e);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12} style={{ marginBottom: '1rem' }}>
+        <TextField
+          fullWidth
+          required
+          label={Tr(Password)}
+          defaultValue={pass}
+          type="password"
+          autoComplete="off"
+          onChange={e => {
+            handleChange('pass', e);
+          }}
+        />
+      </Grid>
+    </Fragment>
+  );
 
-    return (
-      <Row className={classnames('min-vh-100')}>
-        <Col
-          sm="12"
-          md={{ size: 4, offset: 4 }}
-          className={classnames('align-items-center', 'd-flex')}
-        >
-          <Form onSubmit={this.handleSubmit} className={classnames('col')}>
-            {inputs}
-            <FormGroup row>
-              <Col sm="12" md="6" className={classnames('text-center')}>
-                <Label>
-                  <Input
-                    type="checkbox"
-                    checked={keepLogged}
-                    onChange={e => {
-                      this.handleChange('keepLogged', e);
-                    }}
-                  />
-                  <Translate word={keepLoggedIn} />
-                </Label>
-              </Col>
-              <Col sm="12" md="6" className={classnames('text-center')}>
-                <Button type="primary" className="login-form-button">
+  return (
+    <Box
+      style={{
+        height: '100vh',
+        justifyContent: 'center',
+        display: 'flex',
+        alignItems: 'center'
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <Grid container>
+          {inputs}
+          <Grid item xs={12}>
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item md={6} style={{ textAlign: 'center' }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={keepLogged}
+                      onChange={e => {
+                        handleChange('keepLogged', e);
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label={Tr(keepLoggedIn)}
+                />
+              </Grid>
+              <Grid item md={6} style={{ textAlign: 'center' }}>
+                <Button variant="contained" color="primary" type="submit">
                   <Translate word={SignIn} />
                 </Button>
-              </Col>
-            </FormGroup>
-          </Form>
-        </Col>
-      </Row>
-    );
-  }
-}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </form>
+    </Box>
+  );
+};
 
 Login.propTypes = {
   baseURL: PropTypes.string,
@@ -232,4 +218,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

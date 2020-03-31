@@ -1,6 +1,6 @@
 import React, { Component, createContext as CreateContext } from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'reactstrap';
+import { Select } from '@material-ui/core';
 import { sprintf } from 'sprintf-js';
 import root from 'window-or-global';
 import { translations, defaultLang } from '../../../config/defaults';
@@ -66,10 +66,9 @@ const Translate = ({ word, values }) => {
     if (!word && current.changeLang) {
       const languages = Object.keys(translations);
       return (
-        <Input
-          bsSize="sm"
+        <Select
+          native
           type="select"
-          id="changeLang"
           onChange={e => handleChange(e, current.changeLang)}
         >
           {languages.map(language => (
@@ -78,7 +77,7 @@ const Translate = ({ word, values }) => {
               key={language}
             >{`${translations[language]} (${language})`}</option>
           ))}
-        </Input>
+        </Select>
       );
     }
     const valuesTr = !!values && !Array.isArray(values) ? [values] : values;

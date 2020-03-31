@@ -79,19 +79,17 @@ const User = props => {
 };
 
 User.propTypes = {
-  display: PropTypes.bool,
-  displayMenu: PropTypes.func
+  logoff: PropTypes.bool
 };
 
 User.defaultProps = {
-  display: false,
-  displayMenu: () => undefined
+  logoff: false
 };
 
 const mapStateToProps = state => {
-  const { Opennebula } = state;
+  const { General } = state;
   return {
-    display: Opennebula.user
+    logoff: General.logoff
   };
 };
 

@@ -16,7 +16,11 @@ const { createServer: unsecureServer } = require('http');
 const { createServer: secureServer } = require('https');
 const bodyParser = require('body-parser');
 const { getConfig } = require('./utils/yml-connect');
-const { defaultConfigLog, defaultTypeLog } = require('./config/defaults');
+const {
+  defaultConfigLogPath,
+  defaultConfigLogFile,
+  defaultTypeLog
+} = require('./config/defaults');
 const publicRoutes = require('./routes/public');
 const apiRoutes = require('./routes/api');
 const { messageTerminal, addWsServer } = require('./utils');
