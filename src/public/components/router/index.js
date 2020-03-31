@@ -54,6 +54,13 @@ routeElement.defaultProps = {
 function Routes() {
   return (
     <Switch>
+      <Route
+        exact
+        path={login}
+        component={({ match, history }) => (
+          <Login history={history} match={match} />
+        )}
+      />
       {Object.values(endpoints)?.map(routes =>
         routes.component
           ? routeElement(routes)
