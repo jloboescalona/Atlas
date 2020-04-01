@@ -13,7 +13,16 @@ $font_secondary: red;
 @import "content";
 
 html, body{
-  margin: 0px;
   background-color: $secondary;
-  color: $font_primary
+  color: $font_primary;
+  min-height: 100vh;
+  margin: 0px;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+#root{
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
 }

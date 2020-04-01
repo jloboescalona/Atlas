@@ -138,6 +138,7 @@ const Login = ({ history, baseURL }) => {
   return (
     <Box
       style={{
+        width: '100%',
         height: '100vh',
         justifyContent: 'center',
         display: 'flex',

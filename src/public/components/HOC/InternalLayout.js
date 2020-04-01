@@ -8,13 +8,19 @@ import PrincipalMenu from '../containers/PrincipalMenu';
 import { showMenu } from '../../actions';
 
 const InternalLayout = ({ children, display, displayMenu, title }) => (
-  <Box>
+  <Box
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      flexBasis: '100%'
+    }}
+  >
     <Header title={title} />
     <Drawer anchor="left" open={display} onClose={() => displayMenu(false)}>
       <PrincipalMenu />
     </Drawer>
-    <Grid container>
-      <Grid item xs={12}>
+    <Grid container style={{ flexGrow: 1 }}>
+      <Grid item xs={12} style={{ flexGrow: 1, height: '100%' }}>
         {children}
       </Grid>
       <Grid
