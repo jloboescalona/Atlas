@@ -1,4 +1,19 @@
-import React, { Component, createContext as CreateContext } from 'react';
+/* Copyright 2002-2019, OpenNebula Project, OpenNebula Systems                */
+/*                                                                            */
+/* Licensed under the Apache License, Version 2.0 (the "License"); you may    */
+/* not use this file except in compliance with the License. You may obtain    */
+/* a copy of the License at                                                   */
+/*                                                                            */
+/* http://www.apache.org/licenses/LICENSE-2.0                                 */
+/*                                                                            */
+/* Unless required by applicable law or agreed to in writing, software        */
+/* distributed under the License is distributed on an "AS IS" BASIS,          */
+/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   */
+/* See the License for the specific language governing permissions and        */
+/* limitations under the License.                                             */
+/* -------------------------------------------------------------------------- */
+
+import React, { useState, createContext as CreateContext } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from '@material-ui/core';
 import { sprintf } from 'sprintf-js';
@@ -8,34 +23,24 @@ import { translations, defaultLang } from '../../../config/defaults';
 const langDefault = defaultLang;
 const TranslateContext = new CreateContext();
 
-class TranslateProvider extends Component {
-  constructor() {
-    super();
-    this.state = {
-      current: langDefault
-    };
-    this.changeLang = this.changeLang.bind(this);
-  }
+const TranslateProvider = ({ children }) => {
+  const [current, setCurrent] = useState(langDefault);
 
-  changeLang(lang = langDefault) {
-    this.setState({ current: lang });
-  }
+  const changeLang = (lang = langDefault) => {
+    setCurrent(lang);
+  };
 
-  render() {
-    const { children } = this.props;
-    const { current } = this.state;
-    const value = {
-      currentLang: current,
-      changeLang: this.changeLang
-    };
+  const value = {
+    currentLang: current,
+    changeLang
+  };
 
-    return (
-      <TranslateContext.Provider value={value}>
-        {children}
-      </TranslateContext.Provider>
-    );
-  }
-}
+  return (
+    <TranslateContext.Provider value={value}>
+      {children}
+    </TranslateContext.Provider>
+  );
+};
 
 const Tr = (str = '', fixedValues) => {
   let rtn = str;
