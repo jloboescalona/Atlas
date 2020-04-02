@@ -21,6 +21,18 @@ $quaternary: #353735;
 $font_primary: #353735;
 $font_secondary: red;
 
+@font-face {
+  font-family: 'LatoWeb';
+  src: url('fonts/Lato-Regular.eot'); /* IE9 Compat Modes */
+  src: url('fonts/Lato-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/Lato-Regular.woff2') format('woff2'), /* Modern Browsers */
+       url('fonts/Lato-Regular.woff') format('woff'), /* Modern Browsers */
+       url('fonts/Lato-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}
+
 @import "header";
 @import "login";
 @import "footer";
@@ -28,6 +40,7 @@ $font_secondary: red;
 @import "content";
 
 html, body{
+  font-family: 'LatoWeb';
   background-color: $secondary;
   color: $font_primary;
   min-height: 100vh;

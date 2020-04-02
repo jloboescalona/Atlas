@@ -16,5 +16,8 @@
 .footer{
   border-top: 2px solid $tertiary;
   background-color: $quaternary;
-  color: $secondary
+  text-align: center;
+  a{
+    color: $secondary
+  }
 }

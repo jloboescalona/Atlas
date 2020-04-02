@@ -34,6 +34,10 @@ const files = [
   {
     internal: `${pathInternal}logo.png`,
     external: `${pathExternal}logo.png`
+  },
+  {
+    internal: `${pathInternal}fonts`,
+    external: `${pathExternal}fonts`
   }
 ];
 

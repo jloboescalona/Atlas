@@ -1,4 +1,4 @@
-# Atlas
+# Sunstone React
 
 base for a new sunstone (Opennebula).
 

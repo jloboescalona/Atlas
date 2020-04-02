@@ -21,7 +21,7 @@ import { Translate, Tr } from '../../HOC';
 
 const { Submit, Response } = constants;
 
-const Swagger = () => {
+const TestApi = () => {
   const [data, setData] = useState('');
 
   const handleSubmit = (e, method) => {
@@ -43,18 +43,16 @@ const Swagger = () => {
               <Grid item xs={12}>
                 <FormControl>
                   <form onSubmit={e => handleSubmit(e, method)}>
-                    {Object.entries(params)?.map(([name, param]) => {
-                      console.log(param);
-                      return (
-                        <TextField
-                          label={name}
-                          multiline
-                          rows="4"
-                          defaultValue="Default Value"
-                          variant="outlined"
-                        />
-                      );
-                    })}
+                    {Object.entries(params)?.map(([name, param]) => (
+                      // console.log(param);
+                      <TextField
+                        label={name}
+                        multiline
+                        rows="4"
+                        defaultValue="Default Value"
+                        variant="outlined"
+                      />
+                    ))}
                     <Button variant="contained" color="primary" type="submit">
                       <Translate word={Submit} />
                     </Button>
@@ -79,4 +77,4 @@ const Swagger = () => {
   );
 };
 
-export default Swagger;
+export default TestApi;

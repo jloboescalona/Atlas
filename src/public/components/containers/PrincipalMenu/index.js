@@ -14,22 +14,85 @@
 /* -------------------------------------------------------------------------- */
 
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails
+} from '@material-ui/core';
+import classnames from 'classnames';
+import { Link } from 'react-router-dom';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import endpoints from '../../router/endpoints';
 
 const PrincipalMenu = () => {
-  const { redirect, setRedirect } = useState(false);
+  const [expanded, setExpanded] = useState('');
 
-  return redirect ? (
-    <Redirect to="/" />
-  ) : (
-    <List>
-      <ListItem button onClick={() => setRedirect(true)}>
-        <ListItemText primary="Redirect" />
+  const handleChange = panel => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
+
+  const routeElement = (title = '', { path = '/', menu = true }) =>
+    menu && (
+      <ListItem key={`menu-key-${title}`}>
+        <ListItemText
+          primary={
+            <Link
+              to={path}
+              className={classnames(
+                'link',
+                'MuiTypography-root',
+                'MuiLink-root',
+                'MuiLink-underlineHover',
+                'MuiTypography-colorPrimary'
+              )}
+            >
+              {title.replace('_', ' ')}
+            </Link>
+          }
+        />
       </ListItem>
-      <ListItem button onClick={() => setRedirect(true)}>
-        <ListItemText primary="Redirect" />
-      </ListItem>
+    );
+
+  const routeElements = (title = '', routes = {}) => {
+    const internal = Object.entries(routes)?.map(
+      ([internalTitle, internalRoutes]) =>
+        internalRoutes.component && routeElement(internalTitle, internalRoutes)
+    );
+
+    return (
+      internal.some(components => components !== undefined) && (
+        <ExpansionPanel
+          square
+          expanded={expanded === title}
+          onChange={handleChange(title)}
+          key={`menu-key-${title}`}
+        >
+          <ExpansionPanelSummary
+            aria-controls="panel1d-content"
+            id="panel1d-header"
+            expandIcon={<ExpandMoreIcon />}
+            className={classnames('link')}
+          >
+            {title.replace('_', ' ')}
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classnames('internalNav')}>
+            <List style={{ width: '100%' }}>{internal}</List>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      )
+    );
+  };
+
+  return (
+    <List className={classnames('menu')}>
+      {Object.entries(endpoints)?.map(([title, routes]) =>
+        routes.component
+          ? routeElement(title, routes)
+          : routeElements(title, routes)
+      )}
     </List>
   );
 };
