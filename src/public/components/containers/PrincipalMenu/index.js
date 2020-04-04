@@ -13,7 +13,7 @@
 /* limitations under the License.                                             */
 /* -------------------------------------------------------------------------- */
 
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   List,

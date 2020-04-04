@@ -14,67 +14,162 @@
 /* -------------------------------------------------------------------------- */
 
 import React, { useState } from 'react';
-import { Button, TextField, FormControl, Grid } from '@material-ui/core';
+import { Button, TextField, Grid, Container } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import constants from '../../../constants';
 import commands from '../../../../config/commands-params';
 import { Translate, Tr } from '../../HOC';
 
 const { Submit, Response } = constants;
 
-const TestApi = () => {
-  const [data, setData] = useState('');
+const InputsComponents = ({ name, value, onChange }) => (
+  <Grid item>
+    <TextField
+      key={`api-key-${name}`}
+      name={name}
+      label={name}
+      multiline
+      rows="4"
+      defaultValue={value}
+      variant="outlined"
+      fullWidth
+      style={{ width: '100%', marginBottom: '1rem' }}
+      onChange={e => {
+        onChange(e?.target?.value || '', name);
+      }}
+    />
+  </Grid>
+);
+InputsComponents.propTypes = {
+  name: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.number,
+    PropTypes.array
+  ]),
+  onChange: PropTypes.func
+};
 
-  const handleSubmit = (e, method) => {
+InputsComponents.defaultProps = {
+  name: '',
+  value: '',
+  onChange: () => undefined
+};
+
+const ResponseComponent = ({ data = '' }) => (
+  <TextField
+    disabled
+    label={Tr(Response)}
+    multiline
+    rows="4"
+    value={data}
+    variant="outlined"
+    fullWidth
+    InputProps={{ style: { height: '100%' } }}
+    // eslint-disable-next-line react/jsx-no-duplicate-props
+    inputProps={{ style: { height: '100%' } }}
+    style={{ height: '100%' }}
+  />
+);
+ResponseComponent.propTypes = {
+  data: PropTypes.string
+};
+
+ResponseComponent.defaultProps = {
+  data: ''
+};
+
+const FormComponent = ({ params = {}, method = 'GET' }) => {
+  const [data, setData] = useState('');
+  const [paramsState, setParamsState] = useState(params);
+  const handleValue = (value, name) => {
+    paramsState[name] = { ...paramsState[name], value };
+    setParamsState(paramsState);
+  };
+
+  const handleSubmit = e => {
     if (e && e.preventDefault) {
       e.preventDefault();
-      console.log('-->', method);
+      setData(JSON.stringify(paramsState));
     }
   };
 
   return (
+    <Grid container spacing={2}>
+      <Grid item xs>
+        <form onSubmit={e => handleSubmit(e, method)} autoComplete="off">
+          <Grid container direction="column">
+            {Object.entries(paramsState)?.map(([name, paramState]) => {
+              const { default: defaultValue, value } = paramState;
+              return (
+                <InputsComponents
+                  name={name}
+                  value={value || defaultValue}
+                  key={`form-api-${name}`}
+                  onChange={handleValue}
+                />
+              );
+            })}
+            <Grid item style={{ textAlign: 'right' }}>
+              <Button variant="contained" color="primary" type="submit">
+                <Translate word={Submit} />
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Grid>
+      <Grid item xs>
+        <ResponseComponent data={data} />
+      </Grid>
+    </Grid>
+  );
+};
+FormComponent.propTypes = {
+  params: PropTypes.shape({}),
+  method: PropTypes.string
+};
+
+FormComponent.defaultProps = {
+  params: {},
+  method: 'GET'
+};
+
+const Group = ({ title = '', params = {}, method = 'GET' }) => (
+  <Grid item xs={12} style={{ marginBottom: '2rem' }}>
+    <h2>{title}</h2>
+    <FormComponent params={params} method={method} />
+  </Grid>
+);
+Group.propTypes = {
+  title: PropTypes.string,
+  params: PropTypes.shape({}),
+  method: PropTypes.string
+};
+
+Group.defaultProps = {
+  title: '',
+  params: {},
+  method: 'GET'
+};
+
+const TestApi = () => (
+  <Container>
     <Grid container direction="row">
       {Object.entries(commands)?.map(([title, values]) => {
         const method = (values && values.httpMethod) || 'GET';
         const params = values && values.params;
         return (
-          <Grid item xs={12}>
-            <h2>{title}</h2>
-            <Grid container direction="column">
-              <Grid item xs={12}>
-                <FormControl>
-                  <form onSubmit={e => handleSubmit(e, method)}>
-                    {Object.entries(params)?.map(([name, param]) => (
-                      // console.log(param);
-                      <TextField
-                        label={name}
-                        multiline
-                        rows="4"
-                        defaultValue="Default Value"
-                        variant="outlined"
-                      />
-                    ))}
-                    <Button variant="contained" color="primary" type="submit">
-                      <Translate word={Submit} />
-                    </Button>
-                  </form>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  disabled
-                  label={Tr(Response)}
-                  multiline
-                  rows="4"
-                  defaultValue={data}
-                  variant="outlined"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
+          <Group
+            title={title}
+            params={params}
+            method={method}
+            key={`group-api${title}`}
+          />
         );
       })}
     </Grid>
-  );
-};
+  </Container>
+);
 
 export default TestApi;
