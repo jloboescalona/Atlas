@@ -14,7 +14,16 @@
 /* -------------------------------------------------------------------------- */
 
 import React, { useState } from 'react';
-import { Button, TextField, Grid, Container } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Grid,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import constants from '../../../constants';
 import commands from '../../../../config/commands-params';
@@ -153,23 +162,85 @@ Group.defaultProps = {
   method: 'GET'
 };
 
-const TestApi = () => (
-  <Container>
-    <Grid container direction="row">
-      {Object.entries(commands)?.map(([title, values]) => {
-        const method = (values && values.httpMethod) || 'GET';
-        const params = values && values.params;
-        return (
-          <Group
-            title={title}
-            params={params}
-            method={method}
-            key={`group-api${title}`}
-          />
-        );
-      })}
-    </Grid>
-  </Container>
-);
+const Selector = ({ selected = '', setActionSelected = () => undefined }) => {
+  const handleChange = e => {
+    setActionSelected(e?.target?.value || '');
+  };
+  return (
+    <FormControl variant="outlined" fullWidth>
+      <InputLabel>
+        <Translate word="Select Action" />
+      </InputLabel>
+      <Select
+        labelId="demo-simple-select-outlined-label"
+        id="select-action"
+        value={selected}
+        onChange={handleChange}
+        label={Tr('Select Action')}
+      >
+        <MenuItem value="">
+          <Translate word="none" />
+        </MenuItem>
+        {Object.keys(commands)?.map(action => (
+          <MenuItem key={`selector-action-${action}`} value={action}>
+            {action}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+Selector.propTypes = {
+  selected: PropTypes.string,
+  setActionSelected: PropTypes.func
+};
+
+Selector.defaultProps = {
+  selected: '',
+  setActionSelected: () => undefined
+};
+
+const RenderAction = ({ selected }) => {
+  let rtn = '';
+  if (selected && commands[selected]) {
+    const values = commands[selected];
+    const method = (values && values.httpMethod) || 'GET';
+    const params = values && values.params;
+    rtn = (
+      <Group
+        title={selected}
+        params={params}
+        method={method}
+        key={`group-api${selected}`}
+      />
+    );
+  }
+  return rtn;
+};
+RenderAction.propTypes = {
+  selected: PropTypes.string
+};
+RenderAction.defaultProps = {
+  selected: ''
+};
+
+const TestApi = () => {
+  const [actionSelected, setActionSelected] = useState('');
+  return (
+    <Container>
+      <Grid container direction="row">
+        <Grid container spacing={2}>
+          <Grid item xs style={{ padding: '2rem 0' }}>
+            <Selector
+              selected={actionSelected}
+              setActionSelected={setActionSelected}
+            />
+          </Grid>
+        </Grid>
+        <RenderAction selected={actionSelected} />
+      </Grid>
+    </Container>
+  );
+};
 
 export default TestApi;
