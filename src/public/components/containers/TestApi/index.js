@@ -27,6 +27,7 @@ import {
 import PropTypes from 'prop-types';
 import constants from '../../../constants';
 import commands from '../../../../config/commands-params';
+import { requestData } from '../../../utils';
 import { Translate, Tr } from '../../HOC';
 
 const { Submit, Response } = constants;
@@ -89,7 +90,7 @@ ResponseComponent.defaultProps = {
   data: ''
 };
 
-const FormComponent = ({ params = {}, method = 'GET' }) => {
+const FormComponent = ({ title = '', params = {}, method = 'GET' }) => {
   const [data, setData] = useState('');
   const [paramsState, setParamsState] = useState(params);
   const handleValue = (value, name) => {
@@ -97,10 +98,62 @@ const FormComponent = ({ params = {}, method = 'GET' }) => {
     setParamsState(paramsState);
   };
 
+  const body = () => {
+    const rtn = {};
+    // eslint-disable-next-line no-unused-expressions
+    Object.entries(paramsState)?.forEach(([name, value]) => {
+      if (value?.from === 'POST_BODY') {
+        rtn[name] = value.value || value.default;
+      }
+    });
+    return rtn;
+  };
+
+  const query = () => {
+    let rtn = '';
+    // eslint-disable-next-line no-unused-expressions
+    Object.entries(paramsState)?.forEach(([name, value]) => {
+      if (value?.from === 'QUERY') {
+        rtn += `${rtn.length ? '&' : ''}${name}=${encodeURI(
+          value.value || value.default
+        )}`;
+      }
+    });
+    return `?${rtn}`;
+  };
+
+  const resource = () => {
+    let rtn = '';
+    // eslint-disable-next-line no-unused-expressions
+    Object.entries(paramsState)?.forEach(([name, value]) => {
+      if (value?.from === 'RESOURCE') {
+        rtn = `/${value.value || value.default}`;
+      }
+    });
+    return rtn;
+  };
+
+  const postParams = {
+    data: body(),
+    method,
+    authenticate: true
+  };
+
+  const url = () => `api/${title.replace('.', '/') + resource() + query()}`;
+
   const handleSubmit = e => {
     if (e && e.preventDefault) {
       e.preventDefault();
-      setData(JSON.stringify(paramsState));
+      requestData(url(), postParams).then(response => {
+        if (response && response.id) {
+          const { id } = response;
+          if (id === 401) {
+            console.log('ERROR');
+          } else if (id === 200) {
+            setData(JSON.stringify(response));
+          }
+        }
+      });
     }
   };
 
@@ -135,11 +188,13 @@ const FormComponent = ({ params = {}, method = 'GET' }) => {
   );
 };
 FormComponent.propTypes = {
+  title: PropTypes.string,
   params: PropTypes.shape({}),
   method: PropTypes.string
 };
 
 FormComponent.defaultProps = {
+  title: '',
   params: {},
   method: 'GET'
 };
@@ -147,7 +202,7 @@ FormComponent.defaultProps = {
 const Group = ({ title = '', params = {}, method = 'GET' }) => (
   <Grid item xs={12} style={{ marginBottom: '2rem' }}>
     <h2>{title}</h2>
-    <FormComponent params={params} method={method} />
+    <FormComponent title={title} params={params} method={method} />
   </Grid>
 );
 Group.propTypes = {
