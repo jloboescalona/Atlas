@@ -16,7 +16,7 @@
 const initial = {
   logoff: false,
   displayMenu: false,
-  zone: 0,
+  zone: '',
   loading: true
 };
 

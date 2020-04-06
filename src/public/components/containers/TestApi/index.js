@@ -13,7 +13,7 @@
 /* limitations under the License.                                             */
 /* -------------------------------------------------------------------------- */
 
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import {
   Button,
   TextField,
@@ -200,10 +200,10 @@ FormComponent.defaultProps = {
 };
 
 const Group = ({ title = '', params = {}, method = 'GET' }) => (
-  <Grid item xs={12} style={{ marginBottom: '2rem' }}>
+  <Fragment>
     <h2>{title}</h2>
     <FormComponent title={title} params={params} method={method} />
-  </Grid>
+  </Fragment>
 );
 Group.propTypes = {
   title: PropTypes.string,
@@ -292,7 +292,9 @@ const TestApi = () => {
             />
           </Grid>
         </Grid>
-        <RenderAction selected={actionSelected} />
+        <Grid item xs={12} style={{ marginBottom: '2rem' }}>
+          <RenderAction selected={actionSelected} />
+        </Grid>
       </Grid>
     </Container>
   );
